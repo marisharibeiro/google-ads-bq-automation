@@ -37,14 +37,13 @@ def debug_credentials(credentials):
     except Exception as e:
         print("⚠️ Failed to debug credentials:", e)
 
-def bq_connect(project_id='ekperformancedubai'):
+def bq_connect(bq_project):
     try:
         credentials, _ = default()
         debug_credentials(credentials)  # Add this for debug info
     except:
         key_paths = {
-            'umw-dxb-ai': 'umw_dxb_ai-bigquery.json',
-            'ekperformancedubai': 'ekperformancedubai-bigquery.json',
+            f'{bq_project}': f'{bq_project}-bigquery.json'
         }
         key_path = f'secrets/{project_id}/{key_paths[project_id]}'  
         credentials = service_account.Credentials.from_service_account_file(key_path)
@@ -53,10 +52,6 @@ def bq_connect(project_id='ekperformancedubai'):
     pandas_gbq.context.project = project_id
 
 def upload_to_bq(df, destination, project, table_schema, start_date, end_date, date_column='Date'):
-    """
-    More modular approach to uploading to BigQuery.
-    Yet to be applied across all platforms. Currently only used for Facebook.
-    """
     try:
         try:
             pandas_gbq.read_gbq(

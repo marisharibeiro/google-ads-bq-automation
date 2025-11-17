@@ -24,7 +24,7 @@ This template mirrors real-world multi-market data engineering pipelines used in
 .
 ├── .gitignore
 ├── config.py
-├── googleads
+├── platforms / googleads
 │   ├── data_collector.py
 │   ├── googleads_collector.py
 │   ├── helper_functions.py
@@ -65,7 +65,64 @@ Define:
 - Deletes the configured date window  
 - Appends new records  
 - Enforces schema defined in `settings.py`  
-- Supports incremental and full-year refreshes  
+- Supports incremental and full-year refreshes 
+
+## 🔐 BigQuery Service Account Setup
+
+This pipeline can authenticate to BigQuery in two ways:
+
+1. **Application Default Credentials (ADC)**  
+   Used automatically when running in GCP (Cloud Run, Cloud Functions, VM with attached service account).
+
+2. **Local service account JSON key**  
+   Used when running locally or outside GCP.
+
+If ADC is not available, the pipeline falls back to a JSON key based on the structure defined in `utils/helpers.py`:
+
+```
+secrets/<bq_project>/<bq_project>-bigquery.json
+```
+
+### How to create and place the BigQuery key
+
+1. Go to **Google Cloud Console → IAM & Admin → Service Accounts**.
+2. Create a new service account (or select an existing one).
+3. Assign the following roles:
+   - `BigQuery Data Viewer`
+   - `BigQuery Job User`
+   - `BigQuery Data Editor`
+4. Generate a **JSON key** and download it.
+5. In your project, create the folder:
+
+```
+secrets/<bq_project>/
+```
+
+Example for project `my-gcp-project`:
+
+```
+secrets/my-gcp-project/
+```
+
+6. Save the JSON key file inside this folder with the exact name:
+
+```
+my-gcp-project-bigquery.json
+```
+
+7. Your final structure must look like:
+
+```
+secrets/
+└── my-gcp-project/
+    └── my-gcp-project-bigquery.json
+```
+
+8. Ensure this file is **never committed**.  
+   It should remain local only (protected by `.gitignore`).
+
+Once this is in place, `bq_connect()` will automatically load the correct BigQuery credentials whether the code is running locally or in GCP.
+
 
 ### 4. 🔔 Email Notifications (Success / Failure)
 After each run, the pipeline automatically sends a notification email, including:
