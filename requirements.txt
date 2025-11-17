@@ -1,0 +1,14 @@
+pandas==2.2.3
+pandas-gbq==0.22.0
+
+google-auth==2.34.0
+google-auth-oauthlib==1.2.0
+google-auth-httplib2==0.2.0
+google-cloud-bigquery==3.17.2
+google-api-core==2.19.1
+
+requests==2.32.3
+aiohttp==3.10.5
+
+python-dotenv==1.0.1
+

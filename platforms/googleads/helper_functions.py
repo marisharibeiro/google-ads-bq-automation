@@ -122,28 +122,3 @@ async def transform_data(data):
             flattened_data.append(flattened_result)
 
     return flattened_data
-
-def append_pmax(df, dataset):
-    bq_connect('ekperformancedubai')
-
-    df_pmax = pandas_gbq.read_gbq(
-        f'SELECT *'
-        f'FROM `ekperformancedubai.airlines.googleads_pmax` '
-        f'WHERE CAST (Date as DATE) BETWEEN \'{settings.start}\' AND \'{settings.end}\'',
-        project_id='ekperformancedubai'
-    )
-
-    if dataset == 'airlines_ddt':
-        df_pmax = df_pmax.groupby(['Date', 'Campaign_ID', 'Campaign_name', 'Ad_group_name','Final_URL'])[['Impressions', 'Clicks', 'Cost']].sum().reset_index()
-        df_final = pd.concat([df, df_pmax])
-        df_final = df_final.reset_index(drop=True)
-    elif dataset == 'airlines':
-        df_pmax = df_pmax.groupby(['Date', 'Campaign_name', 'Ad_group_name', 'Final_URL'])[
-            ['Impressions', 'Clicks', 'Cost', 'Video_views', 'Watch_25_rate', 'Watch_50_rate',
-             'Watch_75_rate','Watch_100_rate', 'Interactions', 'Engagements',
-             'Gmail_secondary_clicks']].sum().reset_index()
-        df_final = pd.concat([df, df_pmax])
-        df_final = df_final.reset_index(drop=True)
-
-    return df_final
-
