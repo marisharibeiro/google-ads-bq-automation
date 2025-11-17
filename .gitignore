@@ -9,8 +9,5 @@ __pycache__/
 
 
 .env
-keys/
-platforms/**/creds.py
-secrets/
 
 temp.py
