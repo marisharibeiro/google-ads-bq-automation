@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# IDE / OS
+.DS_Store
+.vscode/
+*.log
+
+
+.env
+keys/
+platforms/**/creds.py
+secrets/
+
+temp.py
